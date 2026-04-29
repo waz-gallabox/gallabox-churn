@@ -1,0 +1,44 @@
+# Credentials — never commit
+.env
+.env.*
+!.env.example
+frontend/.env.local
+frontend/.env.*.local
+!frontend/.env.local.example
+
+# Chargebee subscription cache (contains billing data)
+/tmp/subs_live.json
+subs_live.json
+
+# Zoho token cache
+.zoho_token.json
+~/.gallabox_churn_zoho_token.json
+
+# PocketBase data directory and binary
+pb_data/
+pocketbase
+
+# Dev tooling
+.superset/
+
+# Evo optimizer and GitNexus index (auto-generated)
+.evo/
+.gitnexus/
+
+# Logs and data outputs
+*.log
+data/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# macOS
+.DS_Store
+
+# Node (frontend)
+frontend/node_modules/
+frontend/.next/

@@ -1,0 +1,9 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Pure stdlib — no pip packages needed
+COPY *.py ./
+
+# Run a full sync on start, then every 2 hours
+CMD ["sh", "-c", "python3 sync_all.py && while true; do sleep 7200 && python3 sync_all.py; done"]

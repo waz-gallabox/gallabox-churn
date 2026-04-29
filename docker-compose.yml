@@ -1,0 +1,59 @@
+services:
+
+  pocketbase:
+    build:
+      context: .
+      dockerfile: pb/Dockerfile
+    ports:
+      - "8090:8090"
+    volumes:
+      - pb_data:/pb_data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8090/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      args:
+        NEXT_PUBLIC_PB_BASE: ${NEXT_PUBLIC_PB_BASE}
+    ports:
+      - "3000:3000"
+    environment:
+      PB_BASE: http://pocketbase:8090
+      PB_EMAIL: ${PB_EMAIL}
+      PB_PASSWORD: ${PB_PASSWORD}
+      MONGO_URI: ${MONGO_URI}
+    depends_on:
+      pocketbase:
+        condition: service_healthy
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    environment:
+      PB_BASE: http://pocketbase:8090
+      PB_EMAIL: ${PB_EMAIL}
+      PB_PASSWORD: ${PB_PASSWORD}
+      CH_HOST: ${CH_HOST}
+      CH_USER: ${CH_USER}
+      CH_PASS: ${CH_PASS}
+      CB_SITE: ${CB_SITE}
+      CB_KEY: ${CB_KEY}
+      ZOHO_DESK_ORG_ID: ${ZOHO_DESK_ORG_ID}
+      ZOHO_CLIENT_ID: ${ZOHO_CLIENT_ID}
+      ZOHO_CLIENT_SECRET: ${ZOHO_CLIENT_SECRET}
+      ZOHO_REFRESH_TOKEN: ${ZOHO_REFRESH_TOKEN}
+    depends_on:
+      pocketbase:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pb_data:
